@@ -3,9 +3,9 @@ space: .asciiz " "
 underscore:	.asciiz "_"
 newLine: .asciiz "\n"
 numIncorrectGuesses: .word 0
-stringIncorrectGuesses:	.asciiz "\nThe number of incorrect Guesses is: "
+stringIncorrectGuesses:	.asciiz "\nThe number of incorrect guesses is: "
 stringInput: .asciiz "Please input a word: "
-stringInput2: .asciiz "\nGuess a Letter "
+stringInput2: .asciiz "\nGuess a letter: "
 wordToGuess: .asciiz " "	#intentionally last - put other data structures before this
 
 	.text
@@ -65,7 +65,7 @@ loop:
 	li $v0, 4
 	syscall
 	li $v0, 12
-	syscall	#inputs a character
+	syscall	# inputs a character
 	add $s7, $v0, $zero
 
 	add $s5, $s4, $zero
@@ -76,7 +76,6 @@ loop:
 	beq $t3, 3, end
 
 	j loop
-	j end
 
 checkForMatch:
 	la $t3, wordToGuess
@@ -142,5 +141,3 @@ addToStack:
 	jr $ra
 
 end:
-	li $v0, 10
-	syscall
