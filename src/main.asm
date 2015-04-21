@@ -91,7 +91,8 @@ checkForMatch:
 matchFound:
 	sw $s2, ($s5)
 	add $t2, $zero, 2	#used in finished to see if a char matched
-	j checkForMatch
+	j soundGood
+	#j checkForMatch
 
 matchCompleted:
 	bne $t2, 2, incrementGuessesNum
@@ -101,7 +102,9 @@ incrementGuessesNum:
 	lw $t3, numIncorrectGuesses
 	add $t3, $t3, 1
 	sw $t3, numIncorrectGuesses
-	jr $ra
+	
+	j soundBad
+	#jr $ra
 
 generateWord:	#make a word with _ and letters
 	lb $s6, 4($s5)
@@ -139,5 +142,34 @@ addToStack:
 	add $sp, $sp, 4	#add 1 onto the stack
 	sw $s3, ($sp)
 	jr $ra
+
+soundBad:
+
+	li $v0, 33	#Number for syscall
+	li $a0, 40	#Pitch
+	li $a1, 1000	#Duration
+	li $a2, 56	#Instrument
+	li $a3, 127	#Volume
+	syscall
+	
+	jr $ra
+	
+soundGood:
+	
+	li $v0, 33	#Number for syscall
+	li $a0, 62	#Pitch
+	li $a1, 250	#Duration
+	li $a2, 0	#Instrument
+	li $a3, 127	#Volume
+	syscall
+	
+	li $v0, 33	#Number for syscall
+	li $a0, 67	#Pitch
+	li $a1, 1000	#Duration
+	li $a2, 0	#Instrument
+	li $a3, 127	#Volume
+	syscall
+
+	j checkForMatch
 
 end:
