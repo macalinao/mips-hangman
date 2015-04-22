@@ -6,7 +6,6 @@
 	newLine:		.asciiz "\n"
 	numIncorrectGuesses:	.word 0
 	stringIncorrectGuesses:	.asciiz "\nThe number of incorrect Guesses is: "
-#	stringInput: 	.asciiz "Please input a word: "
 	stringInput2:	.asciiz "\nGuess a Letter "
 	wordLength:	.word 0
 	numLettersGuessed:	.word 0 
