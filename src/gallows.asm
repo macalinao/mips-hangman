@@ -1,0 +1,13 @@
+.data
+g1:      .asciiz "         _"
+g2: 	.asciiz "        /_/|"
+g3:	.asciiz "        | |+-----o"
+g2:	.asciiz "        | ||     |"
+g3:	.asciiz "        | ||     O"
+g4: 	.asciiz "    O/o | ||    /|\\"
+g5: 	.asciiz "   /|  \| ||     |"
+g6:	.asciiz "   _|___| ||___ / \\"
+g7: 	.asciiz "  // \  | ||  /|"
+g8: 	.asciiz " /      |_|/ / /"
+g9: 	.asciiz "/___________/ /"
+g10: 	.asciiz "|___________|/"
