@@ -7,7 +7,7 @@ stringIncorrectGuesses:	.asciiz "\nThe number of incorrect guesses is: "
 stringInput: .asciiz "Please input a word: "
 stringInput2: .asciiz "\nGuess a letter: "
 wordToGuess: .asciiz " "	#intentionally last - put other data structures before this
-
+.include "gallows.asm"
 	.text
 
 main:
