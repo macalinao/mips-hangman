@@ -56,7 +56,7 @@ loop:
 	syscall
 	add $s5, $s4, $zero	#set $s5 to beginning of array
 	
-	print_img
+	print_img #sets $a1 to numIncorrectGuesses
 	print_str("\n")
 
 	jal generateWord
