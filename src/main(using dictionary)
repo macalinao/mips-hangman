@@ -6,6 +6,7 @@
 	newLine:		.asciiz "\n"
 	numIncorrectGuesses:	.word 0
 	stringIncorrectGuesses:	.asciiz "\nThe number of incorrect Guesses is: "
+#	stringInput: 	.asciiz "Please input a word: "
 	stringInput2:	.asciiz "\nGuess a Letter "
 	wordLength:	.word 0
 	numLettersGuessed:	.word 0 
@@ -135,7 +136,9 @@ loop:
 	syscall
 	add $s5, $s4, $zero	#set $s5 to beginning of array
 
+	jal soundBackground
 	jal generateWord
+	jal soundBackground2
 
 	la $a0, stringIncorrectGuesses
 	li $v0, 4
@@ -262,6 +265,29 @@ soundBad:
 	syscall
 	
 	jr $ra
+	
+soundBackground:
+
+	li $v0, 31	#Number for syscall
+	li $a0, 50	#Pitch
+	li $a1, 10000	#Duration
+	li $a2, 20	#Instrument
+	li $a3, 50	#Volume
+	syscall
+	
+	
+	jr $ra	
+soundBackground2:
+
+	li $v0, 31	#Number for syscall
+	li $a0, 60	#Pitch
+	li $a1, 10000	#Duration
+	li $a2, 20	#Instrument
+	li $a3, 75	#Volume
+	syscall
+	
+	
+	jr $ra	
 	
 soundGood:
 	
