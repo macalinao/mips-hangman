@@ -6,8 +6,12 @@ numIncorrectGuesses: .word 0
 stringIncorrectGuesses:	.asciiz "\nThe number of incorrect guesses is: "
 stringInput: .asciiz "Please input a word: "
 stringInput2: .asciiz "\nGuess a letter: "
-wordToGuess: .asciiz " "	#intentionally last - put other data structures before this
+winMsg:	.asciiz "\nCongratulations you Won!"
+loseMsg:.asciiz "\nGame Over"
 .include "gallows.asm"
+.data
+wordToGuess: .asciiz " "	#intentionally last - put other data structures before this
+
 	.text
 
 main:
@@ -51,6 +55,9 @@ loop:
 	la $a0, newLine
 	syscall
 	add $s5, $s4, $zero	#set $s5 to beginning of array
+	
+	print_img
+	print_str("\n")
 
 	jal generateWord
 
@@ -173,3 +180,5 @@ soundGood:
 	j checkForMatch
 
 end:
+	li $v0 10
+	syscall
