@@ -55,7 +55,7 @@ loop:
 	la $a0, newLine
 	syscall
 	add $s5, $s4, $zero	#set $s5 to beginning of array
-	
+
 	print_img #sets $a1 to numIncorrectGuesses
 	print_str("\n")
 
@@ -109,7 +109,7 @@ incrementGuessesNum:
 	lw $t3, numIncorrectGuesses
 	add $t3, $t3, 1
 	sw $t3, numIncorrectGuesses
-	
+
 	j soundBad
 	#jr $ra
 
@@ -158,18 +158,18 @@ soundBad:
 	li $a2, 56	#Instrument
 	li $a3, 127	#Volume
 	syscall
-	
+
 	jr $ra
-	
+
 soundGood:
-	
+
 	li $v0, 33	#Number for syscall
 	li $a0, 62	#Pitch
 	li $a1, 250	#Duration
 	li $a2, 0	#Instrument
 	li $a3, 127	#Volume
 	syscall
-	
+
 	li $v0, 33	#Number for syscall
 	li $a0, 67	#Pitch
 	li $a1, 1000	#Duration
