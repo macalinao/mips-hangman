@@ -236,6 +236,13 @@ addGuess:
 	la $t2, guessedLetters
 
 addGuessLoop:
+	subi $sp, $sp, 20
+	sw $t0, 0($sp)
+	sw $t1, 4($sp)
+	sw $t2, 8($sp)
+	sw $t3, 12($sp)
+	sw $t4, 16($sp)
+
 	# Find character
 	add $t3, $t1, $t2
 	lbu $t4, ($t3)
@@ -251,10 +258,20 @@ addGuessLoop:
 doAddGuess:
 	lbu $t3, ($a0)
 	li $v0, 1
-	jr $ra
+	j endAddGuess
 
 cantAddGuess:
 	li $v0, 0
+	j endAddGuess
+
+endAddGuess:
+	lw $t0, 0($sp)
+	lw $t1, 4($sp)
+	lw $t2, 8($sp)
+	lw $t3, 12($sp)
+	lw $t4, 16($sp)
+	addi $sp, $sp, 20
+
 	jr $ra
 #####
 # END addGuess
