@@ -17,7 +17,7 @@ print_str("        | ||     |\n")
 
 #Prints different parts of gallows
 ##################################
-	lw $a0, numIncorrcectGuesses
+	lw $a0, numIncorrectGuesses
 	# 0 incorrect guesses
 	beq $a0, 1, g1
 	beq $a0, 2, g2
