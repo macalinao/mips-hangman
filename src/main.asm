@@ -1,26 +1,20 @@
 	.data
-	
-array:			.word 
-wordLength:		.word 0
-numLettersGuessed: 	.word 0
-numIncorrectGuesses: 	.word 0
-
-endOfWord:		.asciiz "\r"
-stringFailure:		.asciiz "\nYou have made too many incorrect guesses. Game Over"
-stringSuccess:		.asciiz "\nYou have guessed all of the letters in the word. You Win"
-space: 			.asciiz " "
-underscore:		.asciiz "_"
-newLine: 		.asciiz "\n"
-stringIncorrectGuesses:	.asciiz "\nThe number of incorrect guesses is: "
-stringInput: 		.asciiz "Please input a word: "
-stringInput2: 		.asciiz "\nGuess a letter: "
-winMsg:			.asciiz "\nCongratulations you Won!"
-loseMsg:		.asciiz "\nGame Over"
-wordToGuess: 		.asciiz " "	#intentionally last - put other data structures before this
-guessedLetters: 	.asciiz "                          "
-
-.include "gallows.asm"
-.include "dictionary.asm"
+	endOfWord:	.asciiz "\r"
+	stringFailure:	.asciiz "\nYou have made too many incorrect guesses. Game Over"
+	stringSuccess:	.asciiz "\nYou have guessed all of the letters in the word. You Win"
+	space:		.asciiz " "
+	underscore:	.asciiz "_"
+	newLine:		.asciiz "\n"
+	numIncorrectGuesses:	.word 0
+	stringIncorrectGuesses:	.asciiz "\nThe number of incorrect Guesses is: "
+	stringInput2:	.asciiz "\nGuess a Letter "
+	wordLength:	.word 0
+	numLettersGuessed:	.word 0	
+	wordToGuess: 	.asciiz "                                    "	
+	prevGuessed:	.asciiz "                                    "
+	numCorrectGuesses:	.word 0
+	.include "gallows.asm"
+	.include "dictionary.asm"
 
 	.text
 main:
@@ -63,16 +57,21 @@ stackSetup:
 
 
 loop:
+	la $t6, prevGuessed
+	lw $t5, numLettersGuessed
+	add $t4, $zero, $zero
+	li $v0, 4
+	la $a0, prevGuessed
+	syscall
+
 	li $v0, 4
 	la $a0, newLine
 	syscall
 	add $s5, $s4, $zero	#set $s5 to beginning of array
-
-	print_str("\n")
-
+	
 	addi $s3, $zero, 1
 	jal generateWord
-
+	
 	print_img #sets $a1 to numIncorrectGuesses
 	print_str("\n")
 	
@@ -112,22 +111,45 @@ checkForMatch:
 	add $a1, $t3, $t1
 	lb $a0, ($a1)
 	addi $s5, $s5, 4
-	beq $a0, $s7, matchFound	#checks to see if character guessed is the same as current character in word
+	beq $a0, $s7, checkIfAlreadyGuessed	#checks to see if character guessed is the same as current character in word; if yes, see if it has been guessed before
 	beq $s2, $a0, matchCompleted	#when a null byte is encountered - word is over
 	j checkForMatch
+
+checkIfAlreadyGuessed:
+	la $t6, prevGuessed
+	lw $t5, numLettersGuessed
+	add $t4, $zero, $zero
+	
+checkIfAlreadyGuessedLoop:
+	add $s6, $t4, $t6	
+	lb $t0, ($s6)
+	beq $t4, $t5, storeSetup	#if all previously guessed chars have been examined and none are the same, continue
+	beq $t0, $a0, checkForMatch	#if a char has already been guessed, go back to checkForMatch
+	addi $t4, $t4, 1		
+	j checkIfAlreadyGuessedLoop
+	
+storeSetup:
+addi $a3, $zero, 2
+j matchFound	
+
+storeInPrev:
+	add $t4, $t5, $t6
+	sb $a0, ($t4)
+	j soundGood
 
 matchFound:
 	sw $s2, ($s5)
 	add $t2, $zero, 2	#used in finished to see if a char matched
 	lw $t7, numLettersGuessed
 	addi $t7, $t7, 1
-	sw $t7, numLettersGuessed
+	sw $t7, numLettersGuessed	#increments the number of letters guessed - used for 
 	j checkForMatch
-	#j checkForMatch
 
 matchCompleted:
 	bne $t2, 2, incrementGuessesNum	#if the letter guessed was not in the word, then incorrectguessess++
- 	j soundGood
+	beq $a3, 2, storeInPrev
+	j soundGood
+	#jr $ra	#otherwise go back to loop 
 
 incrementGuessesNum:	#if the letter guessed was not in the word, then incorrectguessess++
 	lw $t3, numIncorrectGuesses
