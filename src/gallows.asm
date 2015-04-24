@@ -10,7 +10,7 @@ string:	.asciiz %str
 	
 .macro print_img
 #Unchanging strings
-print_str("         _\n")
+print_str("\n          _\n")
 print_str("        /_/|\n")
 print_str("        | |+-----o\n")
 print_str("        | ||     |\n")
