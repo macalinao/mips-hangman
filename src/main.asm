@@ -112,7 +112,7 @@ checkForMatch:
 	srl $t1, $t1, 2
 	add $a1, $t3, $t1
 	lb $a0, ($a1)
-	sll $s5, $s5, 2
+	addi $s5, $s5, 4
 	beq $a0, $s7, matchFound
 	beq $s2, $a0, matchCompleted	#when a null byte is encountered - word is over
 	j checkForMatch
