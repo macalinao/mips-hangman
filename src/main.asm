@@ -7,9 +7,13 @@ stringIncorrectGuesses:	.asciiz "\nThe number of incorrect guesses is: "
 stringInput: .asciiz "Please input a word: "
 stringInput2: .asciiz "\nGuess a letter: "
 winMsg:	.asciiz "\nCongratulations you Won!"
-loseMsg:.asciiz "\nGame Over"
+loseMsg: .asciiz "\nGame Over"
+
+guessedLetters: .asciiz "                          "
+
 .include "gallows.asm"
-.data
+
+	.data
 wordToGuess: .asciiz " "	#intentionally last - put other data structures before this
 
 	.text
@@ -87,10 +91,10 @@ loop:
 checkForMatch:
 	la $t3, wordToGuess
 	sub $t1, $s5, $s4
-	div  $t1, $t1, 4
+	srl $t1, 2
 	add $a1, $t3, $t1
 	lb $a0, ($a1)
-	addi $s5, $s5, 4
+	sll $s5, 2
 	beq $a0, $s7, matchFound
 	beq $s2, $a0, matchCompleted
 	j checkForMatch
@@ -178,6 +182,43 @@ soundGood:
 	syscall
 
 	j checkForMatch
+
+#####
+# addGuess(char)
+#
+# Adds a guess.
+# Arg: $a0 - the character guessed
+# Ret: $v0 - contained ? 1 : 0
+#####
+addGuess:
+	# Load our constants
+	li $t0, ' '
+	li $t1, 0
+	la $t2, guessedLetters
+
+addGuessLoop:
+	# Find character
+	add $t3, $t1, $t2
+	beq $t0, ($t3), doAddGuess
+
+	# Return false if exists
+	beq $a0, ($t3), cantAddGuess
+
+	# Increment by 1
+	addi $t1, $t1, 1
+	j addGuessLoop
+
+doAddGuess:
+	lbu $t3, ($a0)
+	li $v0, 1
+	jr $ra
+
+cantAddGuess:
+	li $v0, 0
+	jr $ra
+#####
+# END addGuess
+#####
 
 end:
 	li $v0 10
