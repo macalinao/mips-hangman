@@ -86,12 +86,12 @@ loop:
 	add $s5, $s4, $zero
 
 	# Add guess
-	#jal addGuess
-	#beq $v0, 1, loop2 # Continue if the add was valid
+	jal addGuess
+	beq $v0, 1, loop2 # Continue if the add was valid
 
 	# Otherwise, error
-	#print_str("Letter already guessed.\n")
-	#j loop
+	print_str("Letter already guessed.\n")
+	j loop
 
 loop2:
 	jal checkForMatch
