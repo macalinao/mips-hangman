@@ -19,7 +19,12 @@ print_str("        | ||     |\n")
 ##################################
 	lw $a0, numIncorrcectGuesses
 	# 0 incorrect guesses
-	bne $a0, $0, g1
+	beq $a0, 1, g1
+	beq $a0, 2, g2
+	beq $a0, 3, g3
+	beq $a0, 4, g4
+	beq $a0, 5, g4
+	beq $a0, 6, g6
 	print_str("        | ||\n")     # O
 	print_str("    O/o | ||\n")	#/|\
 	print_str("   /|  \\| ||\n")	# |
