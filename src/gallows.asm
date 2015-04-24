@@ -17,43 +17,44 @@ print_str("        | ||     |\n")
 
 #Prints different parts of gallows
 ##################################
+	lw $a0, numIncorrcectGuesses
 	# 0 incorrect guesses
-	
+	bne $a0, $0, g1
 	print_str("        | ||\n")     # O
 	print_str("    O/o | ||\n")	#/|\
 	print_str("   /|  \\| ||\n")	# |
 	print_str("   _|___| ||___\n")	#/ \
 	j bottom
 	# 1 incorrect guess
-	print_str("        | ||     O\n") 
+g1:	print_str("        | ||     O\n") 
 	print_str("    O/o | ||\n")
 	print_str("   /|  \\| ||\n")	
 	print_str("   _|___| ||___\n")	
 	j bottom
 	#2 incorrect guesses
-	print_str("        | ||     O\n") 
+g2:	print_str("        | ||     O\n") 
 	print_str("    O/o | ||     |   \n")
 	print_str("   /|  \\| ||     |  \n")
 	print_str("   _|___| ||___\n")
 	j bottom
 	#3 incorrect guesses
-	print_str("        | ||     O\n") 
+g3:	print_str("        | ||     O\n") 
 	print_str("    O/o | ||    /|   \n")
 	print_str("   /|  \\| ||     |  \n")
 	print_str("   _|___| ||___\n")
 	j bottom
 	#4 incorrect guesses
-	print_str("        | ||     O\n") 
+g4:	print_str("        | ||     O\n") 
 	print_str("    O/o | ||    /|\\ \n")
 	print_str("   /|  \\| ||     |  \n")
 	print_str("   _|___| ||___\n")
 	#5 incorrect guesses
-	print_str("        | ||     O\n") 
+g5:	print_str("        | ||     O\n") 
 	print_str("    O/o | ||    /|\\ \n")
 	print_str("   /|  \\| ||     |  \n")
 	print_str("   _|___| ||___ /    \n")
 	#6 incorrect guesses
-	print_str("        | ||     O\n") 
+g6:	print_str("        | ||     O\n") 
 	print_str("    O/o | ||    /|\\ \n")
 	print_str("   /|  \\| ||     |  \n")
 	print_str("   _|___| ||___ / \\ \n") 

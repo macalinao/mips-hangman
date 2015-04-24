@@ -103,6 +103,16 @@ loop:
 	add $s7, $v0, $zero
 
 	add $s5, $s4, $zero
+
+	# Add guess
+	jal addGuess
+	beq $v0, 1, loop2 # Continue if the add was valid
+
+	# Otherwise, error
+	print_str("Letter already guessed.\n")
+	j loop
+
+loop2:
 	jal checkForMatch
 	add $t2, $zero, $zero
 
@@ -114,10 +124,10 @@ loop:
 checkForMatch:
 	la $t3, wordToGuess
 	sub $t1, $s5, $s4
-	srl $t1, 2
+	srl $t1, $t1, 2
 	add $a1, $t3, $t1
 	lb $a0, ($a1)
-	sll $s5, 2
+	sll $s5, $s5, 2
 	beq $a0, $s7, matchFound
 	beq $s2, $a0, matchCompleted
 	j checkForMatch
@@ -232,12 +242,20 @@ addGuess:
 	la $t2, guessedLetters
 
 addGuessLoop:
+	subi $sp, $sp, 20
+	sw $t0, 0($sp)
+	sw $t1, 4($sp)
+	sw $t2, 8($sp)
+	sw $t3, 12($sp)
+	sw $t4, 16($sp)
+
 	# Find character
 	add $t3, $t1, $t2
-	beq $t0, ($t3), doAddGuess
+	lbu $t4, ($t3)
+	beq $t0, $t4, doAddGuess
 
 	# Return false if exists
-	beq $a0, ($t3), cantAddGuess
+	beq $a0, $t4, cantAddGuess
 
 	# Increment by 1
 	addi $t1, $t1, 1
@@ -246,10 +264,20 @@ addGuessLoop:
 doAddGuess:
 	lbu $t3, ($a0)
 	li $v0, 1
-	jr $ra
+	j endAddGuess
 
 cantAddGuess:
 	li $v0, 0
+	j endAddGuess
+
+endAddGuess:
+	lw $t0, 0($sp)
+	lw $t1, 4($sp)
+	lw $t2, 8($sp)
+	lw $t3, 12($sp)
+	lw $t4, 16($sp)
+	addi $sp, $sp, 20
+
 	jr $ra
 #####
 # END addGuess
