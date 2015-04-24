@@ -119,17 +119,15 @@ checkForMatch:
 matchFound:
 	sw $s2, ($s5)
 	add $t2, $zero, 2	#used in finished to see if a char matched
-
-	j soundGood
+	lw $t7, numLettersGuessed
+	addi $t7, $t7, 1
+	sw $t7, numLettersGuessed
+	j checkForMatch
 	#j checkForMatch
 
 matchCompleted:
-	bne $t2, 2, incrementGuessesNum
-	jr $ra
-	lw $t7, numLettersGuessed
-	addi $t7, $t7, 1
-	sw $t7, numLettersGuessed	#increments the number of letters guessed - used for 
-	j checkForMatch
+	bne $t2, 2, incrementGuessesNum	#if the letter guessed was not in the word, then incorrectguessess++
+ 	j soundGood
 
 incrementGuessesNum:	#if the letter guessed was not in the word, then incorrectguessess++
 	lw $t3, numIncorrectGuesses
