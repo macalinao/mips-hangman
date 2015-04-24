@@ -1,48 +1,53 @@
 	.data
-space: .asciiz " "
-underscore:	.asciiz "_"
-newLine: .asciiz "\n"
-numIncorrectGuesses: .word 0
-stringIncorrectGuesses:	.asciiz "\nThe number of incorrect guesses is: "
-stringInput: .asciiz "Please input a word: "
-stringInput2: .asciiz "\nGuess a letter: "
-winMsg:	.asciiz "\nCongratulations you Won!"
-loseMsg:.asciiz "\nGame Over"
-.include "gallows.asm"
-.data
-wordToGuess: .asciiz " "	#intentionally last - put other data structures before this
+	endOfWord:	.asciiz "\r"
+	stringFailure:	.asciiz "\nYou have made too many incorrect guesses. Game Over"
+	stringSuccess:	.asciiz "\n You have guessed all of the letters in the word. You Win"
+	space:		.asciiz " "
+	underscore:	.asciiz "_"
+	newLine:		.asciiz "\n"
+	numIncorrectGuesses:	.word 0
+	stringIncorrectGuesses:	.asciiz "\nThe number of incorrect Guesses is: "
+	stringInput: 	.asciiz "Please input a word: "
+	stringInput2:	.asciiz "\nGuess a Letter "
+	wordLength:	.word 0
+	numLettersGuessed:	.word 0	
+	wordToGuess: 	.asciiz "                                    "	
+	.include "gallows.asm"
+	.include "dictionary.asm"
 
 	.text
-
 main:
-	addi $s3, $s3, 1 #set $s3 to 1 for use later
+
+
+	lb $t7, space
+	addi $s3, $zero, 1 #set $s3 to 1 for use later
 	add $s4, $sp, $zero
 	addi $s5, $sp, 4
 	la $t0, wordToGuess
-	lb $s2, 1000($t0) #sets $s2 to null bit
+	lb $s2, numIncorrectGuesses #sets $s2 to null bit
+	addi $s1, $zero, -1	#set string length to -2 (to get correct value later)
+	sw $s1, wordLength
 
-	#list of registers: $s0 = 2, $s1 = nothing, $s2 = null, $s3 = 1, $s4 = $sp, $s5 = $sp (used to move up and down array), $s6 used in generateWord, $s7 = used to store imported char
-	#		    $t0 = address of wordToGuess, $t1 = used in printChar
+	#list of registers: $s0 = 2, $s1 = nothing, $s2 = null, $s3 = 1, $s4 = $sp, $s5 = $sp (used to move up and down array), $s6 used in generateWord can be used in other things, $s7 = used to store imported char
+	#		    $t0 = address of wordToGuess, $t1 = used in printChar, $t2 = used in checkForMatch
 	#stack is used for the array - should that be changed?
 
-	li $v0, 4
-	la $a0, stringInput
-	syscall		#prompt user for input
-	li $v0, 8
-	la $a0, wordToGuess
-	li $a1, 256
-	syscall #loads a string into memory at string's address (max 256 chars)
+#	li $v0, 4
+#	la $a0, stringInput
+#	syscall		#prompt user for input
+#	li $v0, 8
+#	la $a0, wordToGuess
+#	li $a1, 256
+#	syscall #loads a string into memory at string's address (max 256 chars)
 
 	la $t0, wordToGuess
-
+	
 stackSetup:
 	lb $a0, ($t0)
 	jal addToStack		#adds onto stack
 	addi $t0, $t0, 1
-	bne $a0, $s2, stackSetup	#loops until a null character is encountered
+	bne $a0, $t7, stackSetup	#loops until a null character is encountered
 
-	sw $s2, ($sp)
-	add $sp, $sp, -4	#takes 2 1's off the stack becasue there are 2 too many
 
 	addi $s0, $s0, 2
 	sw $s0, ($sp)
@@ -50,16 +55,18 @@ stackSetup:
 
 	#Word inputed and store in memory; stack set up as array
 
+
 loop:
 	li $v0, 4
 	la $a0, newLine
 	syscall
 	add $s5, $s4, $zero	#set $s5 to beginning of array
-
+	
+	addi $s3, $zero, 1
+	jal generateWord
+	
 	print_img #sets $a1 to numIncorrectGuesses
 	print_str("\n")
-
-	jal generateWord
 
 	la $a0, stringIncorrectGuesses
 	li $v0, 4
@@ -72,7 +79,7 @@ loop:
 	li $v0, 4
 	syscall
 	li $v0, 12
-	syscall	# inputs a character
+	syscall	#inputs a character
 	add $s7, $v0, $zero
 
 	add $s5, $s4, $zero
@@ -80,9 +87,14 @@ loop:
 	add $t2, $zero, $zero
 
 	lw $t3, numIncorrectGuesses
-	beq $t3, 3, end
+	beq $t3, 3, failure
+
+	lw $t3, wordLength
+	lw $t4, numLettersGuessed
+	beq $t3, $t4, success
 
 	j loop
+	#j end
 
 checkForMatch:
 	la $t3, wordToGuess
@@ -92,26 +104,30 @@ checkForMatch:
 	lb $a0, ($a1)
 	addi $s5, $s5, 4
 	beq $a0, $s7, matchFound
-	beq $s2, $a0, matchCompleted
+	beq $s2, $a0, matchCompleted	#when a null byte is encountered - word is over
 	j checkForMatch
 
 matchFound:
 	sw $s2, ($s5)
 	add $t2, $zero, 2	#used in finished to see if a char matched
-	j soundGood
-	#j checkForMatch
+	lw $t7, numLettersGuessed
+	addi $t7, $t7, 1
+	sw $t7, numLettersGuessed	#increments the number of letters guessed - used for 
+	j checkForMatch
 
 matchCompleted:
-	bne $t2, 2, incrementGuessesNum
-	jr $ra
+	bne $t2, 2, incrementGuessesNum	#if the letter guessed was not in the word, then incorrectguessess++
+	j soundGood
+	#jr $ra	#otherwise go back to loop 
 
-incrementGuessesNum:
+incrementGuessesNum:	#if the letter guessed was not in the word, then incorrectguessess++
 	lw $t3, numIncorrectGuesses
 	add $t3, $t3, 1
 	sw $t3, numIncorrectGuesses
-
 	j soundBad
 	#jr $ra
+
+
 
 generateWord:	#make a word with _ and letters
 	lb $s6, 4($s5)
@@ -146,9 +162,26 @@ printChar:	#if value in array is 0, then the character from that spot is printed
 	j generateWord
 
 addToStack:
+	lw $s1, wordLength
+	addi $s1, $s1, 1
+	sw $s1, wordLength
 	add $sp, $sp, 4	#add 1 onto the stack
 	sw $s3, ($sp)
 	jr $ra
+
+failure:	#reached from end of main loop
+	li $v0, 4
+	la $a0, stringFailure
+	syscall
+	#insert sound for losing the game
+	j end
+
+success:	#reached from end of main loop
+	li $v0, 4
+	la $a0, stringSuccess
+	syscall
+	#insert sounds for winning the game
+	j end
 
 soundBad:
 
@@ -158,18 +191,18 @@ soundBad:
 	li $a2, 56	#Instrument
 	li $a3, 127	#Volume
 	syscall
-
+	
 	jr $ra
-
+	
 soundGood:
-
+	
 	li $v0, 33	#Number for syscall
 	li $a0, 62	#Pitch
 	li $a1, 250	#Duration
 	li $a2, 0	#Instrument
 	li $a3, 127	#Volume
 	syscall
-
+	
 	li $v0, 33	#Number for syscall
 	li $a0, 67	#Pitch
 	li $a1, 1000	#Duration
@@ -177,8 +210,8 @@ soundGood:
 	li $a3, 127	#Volume
 	syscall
 
-	j checkForMatch
+	jr $ra
 
 end:
-	li $v0 10
+	li $v0, 10
 	syscall
