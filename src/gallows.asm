@@ -23,7 +23,7 @@ print_str("        | ||     |\n")
 	beq $a0, 2, g2
 	beq $a0, 3, g3
 	beq $a0, 4, g4
-	beq $a0, 5, g4
+	beq $a0, 5, g5
 	beq $a0, 6, g6
 	print_str("        | ||\n")     # O
 	print_str("    O/o | ||\n")	#/|\
@@ -53,16 +53,19 @@ g4:	print_str("        | ||     O\n")
 	print_str("    O/o | ||    /|\\ \n")
 	print_str("   /|  \\| ||     |  \n")
 	print_str("   _|___| ||___\n")
+	j bottom
 	#5 incorrect guesses
 g5:	print_str("        | ||     O\n") 
 	print_str("    O/o | ||    /|\\ \n")
 	print_str("   /|  \\| ||     |  \n")
 	print_str("   _|___| ||___ /    \n")
+	j bottom
 	#6 incorrect guesses
 g6:	print_str("        | ||     O\n") 
 	print_str("    O/o | ||    /|\\ \n")
 	print_str("   /|  \\| ||     |  \n")
 	print_str("   _|___| ||___ / \\ \n") 
+	j bottom
 	
 #################################
 
