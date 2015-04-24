@@ -1,19 +1,26 @@
 	.data
-	endOfWord:	.asciiz "\r"
-	stringFailure:	.asciiz "\nYou have made too many incorrect guesses. Game Over"
-	stringSuccess:	.asciiz "\nYou have guessed all of the letters in the word. You Win"
-	space:		.asciiz " "
-	underscore:	.asciiz "_"
-	newLine:		.asciiz "\n"
-	numIncorrectGuesses:	.word 0
-	stringIncorrectGuesses:	.asciiz "\nThe number of incorrect Guesses is: "
-	stringInput2:	.asciiz "\nGuess a Letter "
-	wordLength:	.word 0
-	numLettersGuessed:	.word 0	
-	wordToGuess: 	.asciiz "                                    "	
-	array:	.word 0
-	.include "gallows.asm"
-	.include "dictionary.asm"
+	
+array:			.word 
+wordLength:		.word 0
+numLettersGuessed: 	.word 0
+numIncorrectGuesses: 	.word 0
+
+endOfWord:		.asciiz "\r"
+stringFailure:		.asciiz "\nYou have made too many incorrect guesses. Game Over"
+stringSuccess:		.asciiz "\nYou have guessed all of the letters in the word. You Win"
+space: 			.asciiz " "
+underscore:		.asciiz "_"
+newLine: 		.asciiz "\n"
+stringIncorrectGuesses:	.asciiz "\nThe number of incorrect guesses is: "
+stringInput: 		.asciiz "Please input a word: "
+stringInput2: 		.asciiz "\nGuess a letter: "
+winMsg:			.asciiz "\nCongratulations you Won!"
+loseMsg:		.asciiz "\nGame Over"
+wordToGuess: 		.asciiz " "	#intentionally last - put other data structures before this
+guessedLetters: 	.asciiz "                          "
+
+.include "gallows.asm"
+.include "dictionary.asm"
 
 	.text
 main:
@@ -60,10 +67,12 @@ loop:
 	la $a0, newLine
 	syscall
 	add $s5, $s4, $zero	#set $s5 to beginning of array
-	
+
+	print_str("\n")
+
 	addi $s3, $zero, 1
 	jal generateWord
-	
+
 	print_img #sets $a1 to numIncorrectGuesses
 	print_str("\n")
 	
@@ -110,15 +119,17 @@ checkForMatch:
 matchFound:
 	sw $s2, ($s5)
 	add $t2, $zero, 2	#used in finished to see if a char matched
+
+	j soundGood
+	#j checkForMatch
+
+matchCompleted:
+	bne $t2, 2, incrementGuessesNum
+	jr $ra
 	lw $t7, numLettersGuessed
 	addi $t7, $t7, 1
 	sw $t7, numLettersGuessed	#increments the number of letters guessed - used for 
 	j checkForMatch
-
-matchCompleted:
-	bne $t2, 2, incrementGuessesNum	#if the letter guessed was not in the word, then incorrectguessess++
-	j soundGood
-	#jr $ra	#otherwise go back to loop 
 
 incrementGuessesNum:	#if the letter guessed was not in the word, then incorrectguessess++
 	lw $t3, numIncorrectGuesses

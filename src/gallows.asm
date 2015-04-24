@@ -2,6 +2,7 @@
 	.macro 	print_str (%str)  #prints the string of a given label
 	.data	
 string:	.asciiz %str
+numIncorrectGuesses: .word 0
 	.text
 	li $v0, 4
 	la $a0, string
