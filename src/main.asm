@@ -11,6 +11,7 @@ wordLength:	.word 0
 numLettersGuessed:	.word 0
 wordToGuess: 	.asciiz "                                    "
 prevGuessed:	.asciiz "                                    "
+guessedLetters: .asciiz "                          "
 numCorrectGuesses:	.word 0
 .include "gallows.asm"
 .include "dictionary.asm"
@@ -56,6 +57,8 @@ stackSetup:
 
 
 loop:
+	print_str("\n=====================================\n")
+
 	la $t6, prevGuessed
 	lw $t5, numLettersGuessed
 	add $t4, $zero, $zero
@@ -91,11 +94,18 @@ loop:
 	syscall	#inputs a character
 	add $s7, $v0, $zero
 
+	# Add guess
+	jal addGuess
+	beq $v0, 1, loop2 # Continue if the add was valid
+
+	# Otherwise, error
+	print_str("Letter already guessed.\n")
+	j loop
+
+loop2:
 	add $s5, $s4, $zero
 	jal checkForMatch
 	add $t2, $zero, $zero
-
-
 
 	lw $t3, wordLength
 	lw $t4, numLettersGuessed
@@ -237,6 +247,61 @@ soundGood:
 	syscall
 
 	jr $ra
+
+#####
+# addGuess(char)
+#
+# Adds a guess.
+# Arg: $a0 - the character guessed
+# Ret: $v0 - contained ? 1 : 0
+#####
+addGuess:
+	# Load our constants
+	li $t0, ' '
+	li $t1, 0
+	la $t2, guessedLetters
+
+addGuessLoop:
+	subi $sp, $sp, 20
+	sw $t0, 0($sp)
+	sw $t1, 4($sp)
+	sw $t2, 8($sp)
+	sw $t3, 12($sp)
+	sw $t4, 16($sp)
+
+	# Find character
+	add $t3, $t1, $t2
+	lbu $t4, ($t3)
+	beq $t0, $t4, doAddGuess
+
+	# Return false if exists
+	beq $a0, $t4, cantAddGuess
+
+	# Increment by 1
+	addi $t1, $t1, 1
+	j addGuessLoop
+
+doAddGuess:
+	lbu $t3, ($a0)
+	li $v0, 1
+	j endAddGuess
+
+cantAddGuess:
+	li $v0, 0
+	j endAddGuess
+
+endAddGuess:
+	lw $t0, 0($sp)
+	lw $t1, 4($sp)
+	lw $t2, 8($sp)
+	lw $t3, 12($sp)
+	lw $t4, 16($sp)
+	addi $sp, $sp, 20
+
+	jr $ra
+#####
+# END addGuess
+#####
 
 end:
 	li $v0, 10
