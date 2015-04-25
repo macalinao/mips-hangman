@@ -1,5 +1,4 @@
 	.data
-endOfWord:	.asciiz "\r"
 numIncorrectGuesses:	.word 0
 wordLength:	.word 0
 numLettersGuessed:	.word 0

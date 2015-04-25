@@ -31,7 +31,7 @@ import:
 
 	addi $t0, $a0, 0x10010030
 	li $s1, '\n'
-	lb $s2, endOfWord
+	li $s2, '\r'
 
 	add $a0, $t0, $zero
 
