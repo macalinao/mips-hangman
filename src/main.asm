@@ -1,8 +1,5 @@
 	.data
 endOfWord:	.asciiz "\r"
-space:		.asciiz " "
-underscore:	.asciiz "_"
-newLine:		.asciiz "\n"
 numIncorrectGuesses:	.word 0
 wordLength:	.word 0
 numLettersGuessed:	.word 0
@@ -37,7 +34,7 @@ main:
 #	syscall #loads a string into memory at string's address (max 256 chars)
 
 	la $t0, wordToGuess
-	lb $t7, space
+	li $t7, ' '
 
 stackSetup:
 	lb $a0, ($t0)
@@ -67,9 +64,6 @@ loop:
 	syscall
 	print_str("\n")
 
-	li $v0, 4
-	la $a0, newLine
-	syscall
 	add $s5, $s4, $zero	#set $s5 to beginning of array
 
 	addi $s3, $zero, 1
@@ -175,14 +169,8 @@ generateWord:	#make a word with _ and letters
 	jr $ra
 
 print_:		#if value in array is 1, then an underscore is printed
-	la $a0, underscore
-	li $v0, 4
-	syscall
-
+	print_str("_ ")
 	addi $s5, $s5, 4
-	lb $a0, space
-	li $v0, 11
-	syscall	#prints a space so underscores can be told apart
 	j generateWord
 
 printChar:	#if value in array is 0, then the character from that spot is printed
@@ -195,9 +183,7 @@ printChar:	#if value in array is 0, then the character from that spot is printed
 	syscall
 
 	addi $s5, $s5, 4
-	lb $a0, space
-	li $v0, 11
-	syscall	#prints a space so underscores can be told apart
+	print_str(" ")
 	j generateWord
 
 addToStack:

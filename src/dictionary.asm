@@ -30,7 +30,7 @@ import:
 	syscall
 
 	addi $t0, $a0, 0x10010030
-	lb $s1, newLine
+	li $s1, '\n'
 	lb $s2, endOfWord
 
 	add $a0, $t0, $zero
@@ -52,9 +52,7 @@ findEndLoop:
 	j findEndLoop			#repeat until the end of the word is found
 
 newWordFound:
-	la $a0, newLine
-	li $v0, 4
-	syscall
+	print_str("\n")
 
 	addi $t0, $t0, 1
 	li $v0, 4
