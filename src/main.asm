@@ -1,12 +1,9 @@
 	.data
 endOfWord:	.asciiz "\r"
-stringSuccess:	.asciiz "\nYou have guessed all of the letters in the word. You Win"
 space:		.asciiz " "
 underscore:	.asciiz "_"
 newLine:		.asciiz "\n"
 numIncorrectGuesses:	.word 0
-stringIncorrectGuesses:	.asciiz "\nThe number of incorrect Guesses is: "
-stringInput2:	.asciiz "\nGuess a Letter "
 wordLength:	.word 0
 numLettersGuessed:	.word 0
 wordToGuess: 	.asciiz "                                    "
@@ -84,16 +81,15 @@ loop:
 	lw $t3, numIncorrectGuesses
 	beq $t3, 6, failure
 
-	la $a0, stringIncorrectGuesses
-	li $v0, 4
-	syscall
+	# Print number of incorrect guesses
+	print_str("Incorrect guesses: ")
 	li $v0, 1
 	lw $a0, numIncorrectGuesses
-	syscall	#prints number of Incorrect Guesses
-
-	la $a0, stringInput2
-	li $v0, 4
 	syscall
+	print_str("\n")
+
+	# Add guessed letter
+	print_str("Guess a letter: ")
 	li $v0, 12
 	syscall	#inputs a character
 	add $s7, $v0, $zero
@@ -218,9 +214,7 @@ failure:	#reached from end of main loop
 	j end
 
 success:	#reached from end of main loop
-	li $v0, 4
-	la $a0, stringSuccess
-	syscall
+	print_str("You have guessed all of the letters in the word. You Win\n")
 	#insert sounds for winning the game
 	j end
 
