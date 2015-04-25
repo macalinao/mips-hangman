@@ -62,9 +62,13 @@ loop:
 	la $t6, prevGuessed
 	lw $t5, numLettersGuessed
 	add $t4, $zero, $zero
+
+	# Print letters already guessed
+	print_str("Guessed letters: ")
 	li $v0, 4
-	la $a0, prevGuessed
+	la $a0, guessedLetters
 	syscall
+	print_str("\n")
 
 	li $v0, 4
 	la $a0, newLine
