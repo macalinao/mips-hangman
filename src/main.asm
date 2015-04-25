@@ -99,6 +99,7 @@ loop:
 	add $s7, $v0, $zero
 
 	# Add guess
+	add $a0, $v0, $zero
 	jal addGuess
 	beq $v0, 1, loop2 # Continue if the add was valid
 
@@ -286,7 +287,7 @@ addGuessLoop:
 	j addGuessLoop
 
 doAddGuess:
-	lbu $t3, ($a0)
+	sb $a0, ($t3)
 	li $v0, 1
 	j endAddGuess
 
