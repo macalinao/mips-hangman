@@ -1,20 +1,19 @@
 	.data
-	endOfWord:	.asciiz "\r"
-	stringFailure:	.asciiz "\nYou have made too many incorrect guesses. Game Over"
-	stringSuccess:	.asciiz "\nYou have guessed all of the letters in the word. You Win"
-	space:		.asciiz " "
-	underscore:	.asciiz "_"
-	newLine:		.asciiz "\n"
-	numIncorrectGuesses:	.word 0
-	stringIncorrectGuesses:	.asciiz "\nThe number of incorrect Guesses is: "
-	stringInput2:	.asciiz "\nGuess a Letter "
-	wordLength:	.word 0
-	numLettersGuessed:	.word 0	
-	wordToGuess: 	.asciiz "                                    "	
-	prevGuessed:	.asciiz "                                    "
-	numCorrectGuesses:	.word 0
-	.include "gallows.asm"
-	.include "dictionary.asm"
+endOfWord:	.asciiz "\r"
+stringSuccess:	.asciiz "\nYou have guessed all of the letters in the word. You Win"
+space:		.asciiz " "
+underscore:	.asciiz "_"
+newLine:		.asciiz "\n"
+numIncorrectGuesses:	.word 0
+stringIncorrectGuesses:	.asciiz "\nThe number of incorrect Guesses is: "
+stringInput2:	.asciiz "\nGuess a Letter "
+wordLength:	.word 0
+numLettersGuessed:	.word 0
+wordToGuess: 	.asciiz "                                    "
+prevGuessed:	.asciiz "                                    "
+numCorrectGuesses:	.word 0
+.include "gallows.asm"
+.include "dictionary.asm"
 
 	.text
 main:
@@ -41,7 +40,7 @@ main:
 
 	la $t0, wordToGuess
 	lb $t7, space
-	
+
 stackSetup:
 	lb $a0, ($t0)
 	jal addToStack		#adds onto stack
@@ -68,13 +67,13 @@ loop:
 	la $a0, newLine
 	syscall
 	add $s5, $s4, $zero	#set $s5 to beginning of array
-	
+
 	addi $s3, $zero, 1
 	jal generateWord
-	
+
 	print_img #sets $a1 to numIncorrectGuesses
 	print_str("\n")
-	
+
 	lw $t3, numIncorrectGuesses
 	beq $t3, 6, failure
 
@@ -96,7 +95,7 @@ loop:
 	jal checkForMatch
 	add $t2, $zero, $zero
 
-	
+
 
 	lw $t3, wordLength
 	lw $t4, numLettersGuessed
@@ -119,18 +118,18 @@ checkIfAlreadyGuessed:
 	la $t6, prevGuessed
 	lw $t5, numLettersGuessed
 	add $t4, $zero, $zero
-	
+
 checkIfAlreadyGuessedLoop:
-	add $s6, $t4, $t6	
+	add $s6, $t4, $t6
 	lb $t0, ($s6)
 	beq $t4, $t5, storeSetup	#if all previously guessed chars have been examined and none are the same, continue
 	beq $t0, $a0, checkForMatch	#if a char has already been guessed, go back to checkForMatch
-	addi $t4, $t4, 1		
+	addi $t4, $t4, 1
 	j checkIfAlreadyGuessedLoop
-	
+
 storeSetup:
 addi $a3, $zero, 2
-j matchFound	
+j matchFound
 
 storeInPrev:
 	add $t4, $t5, $t6
@@ -142,14 +141,14 @@ matchFound:
 	add $t2, $zero, 2	#used in finished to see if a char matched
 	lw $t7, numLettersGuessed
 	addi $t7, $t7, 1
-	sw $t7, numLettersGuessed	#increments the number of letters guessed - used for 
+	sw $t7, numLettersGuessed	#increments the number of letters guessed - used for
 	j checkForMatch
 
 matchCompleted:
 	bne $t2, 2, incrementGuessesNum	#if the letter guessed was not in the word, then incorrectguessess++
 	beq $a3, 2, storeInPrev
 	j soundGood
-	#jr $ra	#otherwise go back to loop 
+	#jr $ra	#otherwise go back to loop
 
 incrementGuessesNum:	#if the letter guessed was not in the word, then incorrectguessess++
 	lw $t3, numIncorrectGuesses
@@ -157,7 +156,6 @@ incrementGuessesNum:	#if the letter guessed was not in the word, then incorrectg
 	sw $t3, numIncorrectGuesses
 	j soundBad	#play sound for incorrect guess
 	#jr $ra
-
 
 generateWord:	#make a word with _ and letters
 	lb $s6, 4($s5)
@@ -200,9 +198,7 @@ addToStack:
 	jr $ra
 
 failure:	#reached from end of main loop
-	li $v0, 4
-	la $a0, stringFailure
-	syscall
+	print_str("\nYou have made too many incorrect guesses. Game Over")
 	#insert sound for losing the game
 	j end
 
@@ -221,18 +217,18 @@ soundBad:
 	li $a2, 56	#Instrument
 	li $a3, 127	#Volume
 	syscall
-	
+
 	jr $ra
-	
+
 soundGood:
-	
+
 	li $v0, 33	#Number for syscall
 	li $a0, 62	#Pitch
 	li $a1, 250	#Duration
 	li $a2, 0	#Instrument
 	li $a3, 127	#Volume
 	syscall
-	
+
 	li $v0, 33	#Number for syscall
 	li $a0, 67	#Pitch
 	li $a1, 1000	#Duration
