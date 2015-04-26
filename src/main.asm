@@ -45,6 +45,7 @@ stackSetup:
 	addi $s0, $s0, 2
 	sw $s0, ($sp)
 	add $sp, $sp, -4	#takes 2 1's off the stack becasue there are 2 too many
+	addi $sp, $sp, 24
 
 	#Word inputed and store in memory; stack set up as array
 
@@ -199,7 +200,7 @@ failure:	#reached from end of main loop
 	j end
 
 success:	#reached from end of main loop
-	print_str("You have guessed all of the letters in the word. You Win\n")
+	print_str("\nYou have guessed all of the letters in the word. You Win\n")
 	#insert sounds for winning the game
 	j end
 
@@ -252,7 +253,8 @@ addGuessLoop:
 	sw $t2, 8($sp)
 	sw $t3, 12($sp)
 	sw $t4, 16($sp)
-
+	addi $sp, $sp, 20
+	
 	# Find character
 	add $t3, $t1, $t2
 	lbu $t4, ($t3)
@@ -275,6 +277,7 @@ cantAddGuess:
 	j endAddGuess
 
 endAddGuess:
+	subi $sp, $sp, 20
 	lw $t0, 0($sp)
 	lw $t1, 4($sp)
 	lw $t2, 8($sp)
