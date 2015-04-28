@@ -1,6 +1,6 @@
 .text
 	.macro 	print_str (%str)  #prints the string of a given label
-	.data	
+	.data
 string:	.asciiz %str
 numIncorrectGuesses: .word 0
 	.text
@@ -8,7 +8,7 @@ numIncorrectGuesses: .word 0
 	la $a0, string
 	syscall
 	.end_macro
-	
+
 .macro print_img
 #Unchanging strings
 print_str("\n          _\n")
@@ -32,42 +32,42 @@ print_str("        | ||     |\n")
 	print_str("   _|___| ||___\n")	#/ \
 	j bottom
 	# 1 incorrect guess
-g1:	print_str("        | ||     O\n") 
+g1:	print_str("        | ||     O\n")
 	print_str("    O/o | ||\n")
-	print_str("   /|  \\| ||\n")	
-	print_str("   _|___| ||___\n")	
+	print_str("   /|  \\| ||\n")
+	print_str("   _|___| ||___\n")
 	j bottom
 	#2 incorrect guesses
-g2:	print_str("        | ||     O\n") 
+g2:	print_str("        | ||     O\n")
 	print_str("    O/o | ||     |   \n")
 	print_str("   /|  \\| ||     |  \n")
 	print_str("   _|___| ||___\n")
 	j bottom
 	#3 incorrect guesses
-g3:	print_str("        | ||     O\n") 
+g3:	print_str("        | ||     O\n")
 	print_str("    O/o | ||    /|   \n")
 	print_str("   /|  \\| ||     |  \n")
 	print_str("   _|___| ||___\n")
 	j bottom
 	#4 incorrect guesses
-g4:	print_str("        | ||     O\n") 
+g4:	print_str("        | ||     O\n")
 	print_str("    O/o | ||    /|\\ \n")
 	print_str("   /|  \\| ||     |  \n")
 	print_str("   _|___| ||___\n")
 	j bottom
 	#5 incorrect guesses
-g5:	print_str("        | ||     O\n") 
+g5:	print_str("        | ||     O\n")
 	print_str("    O/o | ||    /|\\ \n")
 	print_str("   /|  \\| ||     |  \n")
 	print_str("   _|___| ||___ /    \n")
 	j bottom
 	#6 incorrect guesses
-g6:	print_str("        | ||     O\n") 
+g6:	print_str("        | ||     O\n")
 	print_str("    O/o | ||    /|\\ \n")
 	print_str("   /|  \\| ||     |  \n")
-	print_str("   _|___| ||___ / \\ \n") 
+	print_str("   _|___| ||___ / \\ \n")
 	j bottom
-	
+
 #################################
 
 #Unchanging strings

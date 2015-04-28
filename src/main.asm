@@ -254,7 +254,7 @@ addGuessLoop:
 	sw $t3, 12($sp)
 	sw $t4, 16($sp)
 	addi $sp, $sp, 20
-	
+
 	# Find character
 	add $t3, $t1, $t2
 	lbu $t4, ($t3)
